@@ -1,0 +1,49 @@
+<div class="my-20">
+  <div class="flex flex-row justify-between my-5">
+    <h2 class="text-3xl">Top Collection</h2>
+    <a href="#" class="flex flex-row text-lg hover:text-purple-700">
+      View All
+      <svg xmlns="http://www.w3.org/2000/svg" class="w-5 ml-1 h-7" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3" />
+      </svg>
+    </a>
+  </div>
+  <div class="grid grid-flow-row grid-cols-1 gap-10 md:grid-cols-3 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+    <% @products.each do |product| %>
+      <div class="rounded-lg shadow-lg">
+        <%= image_tag product.images.first, class: "rounded-tl-lg rounded-tr-lg" %>
+        <div class="p-5">
+          <h3><a href="#"><%= product.name %> </a></h3>
+          <div class="flex flex-row my-3">
+            <div class="w-5 h-5 mr-2 bg-black rounded-full shadow-md"></div>
+            <div class="w-5 h-5 mr-2 bg-blue-800 rounded-full shadow-md"></div>
+            <div class="w-5 h-5 mr-2 bg-white rounded-full shadow-md"></div>
+            <div class="w-5 h-5 mr-2 bg-red-800 rounded-full shadow-md"></div>
+            <div class="w-5 h-5 mr-2 bg-green-700 rounded-full shadow-md"></div>
+          </div>
+          <div class="flex flex-row my-3">
+            <a class="px-2 py-1 mr-2 text-xs text-gray-400 border-2 border-gray-300 rounded-md" href="#">XL</a>
+            <a class="px-2 py-1 mr-2 text-xs text-gray-400 border-2 border-gray-300 rounded-md" href="#">XXL</a>
+            <a class="px-2 py-1 mr-2 text-xs text-gray-400 border-2 border-gray-300 rounded-md" href="#">L</a>
+            <a class="px-2 py-1 mr-2 text-xs text-gray-400 border-2 border-gray-300 rounded-md" href="#">M</a>
+            <a class="px-2 py-1 mr-2 text-xs text-gray-400 border-2 border-gray-300 rounded-md" href="#">S</a>
+          </div>
+          <div class="flex flex-col justify-between xl:flex-row">
+            <a class="flex flex-row justify-center px-4 py-2 my-2 text-sm text-white rounded-full bg-gradient-to-r from-red-600 to-pink-500 hover:bg-pink-600 hover:from-pink-600 hover:to-pink-600" href="#">
+              <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
+              </svg>
+              Add to cart
+            </a>
+            <a class="flex flex-row justify-center px-4 py-2 my-2 text-sm text-white bg-purple-600 rounded-full hover:bg-purple-700" href="#">
+              <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 mr-1" viewBox="0 0 20 20" fill="currentColor">
+                <path fill-rule="evenodd" d="M10.293 5.293a1 1 0 011.414 0l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414-1.414L12.586 11H5a1 1 0 110-2h7.586l-2.293-2.293a1 1 0 010-1.414z" clip-rule="evenodd" />
+              </svg>
+              View Details
+            </a>
+          </div>
+        </div>
+      </div>
+    <% end %>
+  </div>
+</div>
