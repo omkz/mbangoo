@@ -1,4 +1,6 @@
 Rails.application.routes.draw do
+  resources :products
+  
   namespace :ngadmin do
       resources :products
       resources :users
