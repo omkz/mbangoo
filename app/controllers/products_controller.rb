@@ -2,6 +2,7 @@ class ProductsController < ApplicationController
   before_action :set_product, only: [:show]
 
   def show
+    @order_item = current_order.order_items.new
   end
 
   private

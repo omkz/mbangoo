@@ -11,7 +11,7 @@
   <div class="grid grid-flow-row grid-cols-1 gap-10 md:grid-cols-3 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
     <% @products.each do |product| %>
       <div class="rounded-lg shadow-lg">
-        <%= image_tag product.images.first, class: "rounded-tl-lg rounded-tr-lg" %>
+        <%= image_tag product.images.first, class: "rounded-tl-lg rounded-tr-lg" if product.images.attached? %>
         <div class="p-5">
           <h3><a href="#"><%= product.name %> </a></h3>
           <div class="flex flex-row my-3">

@@ -1,0 +1,64 @@
+<% if !@order_item.nil? && @order_item.errors.any? %>
+  <div class="alert alert-danger">
+    <ul>
+      <% @order_item.errors.full_messages.each do |msg| %>
+        <li><%= msg %></li>
+      <% end %>
+    </ul>
+  </div>
+<% end %>
+<% if @order_items.size == 0 %>
+  <p class="text-center">
+    There are no items in your shopping cart. Please <%= link_to "go back",
+                                                                 root_path %> and add some items to your cart.
+  </p>
+<% else %>
+  <div class="container mx-auto mt-10">
+    <div class="flex my-10 shadow-md">
+      <div class="w-3/4 px-10 py-10 bg-white">
+        <div class="flex justify-between pb-8 border-b">
+          <h1 class="text-2xl font-semibold">Shopping Cart</h1>
+          <%# <h2 class="text-2xl font-semibold">3 Items</h2> %>
+        </div>
+        <div class="flex mt-10 mb-5">
+          <h3 class="w-2/5 text-xs font-semibold text-gray-600 uppercase">Product Details</h3>
+          <h3 class="w-1/5 text-xs font-semibold text-center text-gray-600 uppercase">Quantity</h3>
+          <h3 class="w-1/5 text-xs font-semibold text-center text-gray-600 uppercase">Price</h3>
+          <h3 class="w-1/5 text-xs font-semibold text-center text-gray-600 uppercase">Total</h3>
+        </div>
+        <% @order_items.each do |order_item| %>
+          <%= render 'carts/cart_row', product: order_item.product, order_item: order_item, show_total: true %>
+        <% end %>
+        <a href="#" class="flex mt-10 text-sm font-semibold text-indigo-600">
+          <svg class="w-4 mr-2 text-indigo-600 fill-current" viewBox="0 0 448 512"><path d="M134.059 296H436c6.627 0 12-5.373 12-12v-56c0-6.627-5.373-12-12-12H134.059v-46.059c0-21.382-25.851-32.09-40.971-16.971L7.029 239.029c-9.373 9.373-9.373 24.569 0 33.941l86.059 86.059c15.119 15.119 40.971 4.411 40.971-16.971V296z"/></svg>
+          Continue Shopping
+        </a>
+      </div>
+      <div id="summary" class="w-1/4 px-8 py-10">
+        <h1 class="pb-8 text-2xl font-semibold border-b">Order Summary</h1>
+        <div class="flex justify-between mt-10 mb-5">
+          <span class="text-sm font-semibold uppercase">Items 3</span>
+          <span class="text-sm font-semibold">590$</span>
+        </div>
+        <div>
+          <label class="inline-block mb-3 text-sm font-medium uppercase">Shipping</label>
+          <select class="block w-full p-2 text-sm text-gray-600">
+            <option>Standard shipping - $10.00</option>
+          </select>
+        </div>
+        <div class="py-10">
+          <label for="promo" class="inline-block mb-3 text-sm font-semibold uppercase">Promo Code</label>
+          <input type="text" id="promo" placeholder="Enter your code" class="w-full p-2 text-sm">
+        </div>
+        <button class="px-5 py-2 text-sm text-white uppercase bg-red-500 hover:bg-red-600">Apply</button>
+        <div class="mt-8 border-t">
+          <div class="flex justify-between py-6 text-sm font-semibold uppercase">
+            <span>Total cost</span>
+            <span><%= number_to_currency current_order.subtotal %></span>
+          </div>
+          <button class="w-full py-3 text-sm font-semibold text-white uppercase bg-indigo-500 hover:bg-indigo-600">Checkout</button>
+        </div>
+      </div>
+    </div>
+  </div>
+<% end %>

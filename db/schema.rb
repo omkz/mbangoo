@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2023_06_13_001348) do
+ActiveRecord::Schema[7.0].define(version: 2023_06_15_094002) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -42,6 +42,35 @@ ActiveRecord::Schema[7.0].define(version: 2023_06_13_001348) do
     t.index ["blob_id", "variation_digest"], name: "index_active_storage_variant_records_uniqueness", unique: true
   end
 
+  create_table "order_items", force: :cascade do |t|
+    t.bigint "product_id"
+    t.bigint "order_id"
+    t.decimal "unit_price", precision: 8, scale: 2
+    t.integer "quantity"
+    t.decimal "total_price", precision: 8, scale: 2
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["order_id"], name: "index_order_items_on_order_id"
+    t.index ["product_id"], name: "index_order_items_on_product_id"
+  end
+
+  create_table "order_statuses", force: :cascade do |t|
+    t.string "name"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  create_table "orders", force: :cascade do |t|
+    t.decimal "subtotal", precision: 8, scale: 2
+    t.decimal "tax", precision: 8, scale: 2
+    t.decimal "shipping", precision: 8, scale: 2
+    t.decimal "total", precision: 8, scale: 2
+    t.bigint "order_status_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["order_status_id"], name: "index_orders_on_order_status_id"
+  end
+
   create_table "products", force: :cascade do |t|
     t.string "name"
     t.text "description"
@@ -65,4 +94,7 @@ ActiveRecord::Schema[7.0].define(version: 2023_06_13_001348) do
 
   add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
   add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
+  add_foreign_key "order_items", "orders"
+  add_foreign_key "order_items", "products"
+  add_foreign_key "orders", "order_statuses"
 end

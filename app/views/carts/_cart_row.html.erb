@@ -1,0 +1,19 @@
+<div class="flex items-center px-6 py-5 -mx-8 hover:bg-gray-100">
+  <div class="flex w-2/5"> <!-- product -->
+    <div class="w-20">
+      <%= image_tag product.images.first, class: "h-24" if product.images.attached? %>
+    </div>
+    <%= form_with model: order_item do |f| %>
+      <div class="flex flex-col justify-between flex-grow ml-4">
+        <span class="text-sm font-bold"><%= product.name %></span>
+        <%= link_to "Remove", order_item, {data: { turbo_method: :delete, turbo_confirm: "Are you sure you wish to delete the product '#{order_item.product.name}' from your cart?"}, class: "text-xs font-semibold text-gray-500 hover:text-red-500"} %>
+      </div>
+    </div>
+    <div class="flex justify-center w-1/5">
+      <%= f.number_field :quantity, value: order_item.quantity.to_i, class: "w-20", min: 1 %>
+      <%= f.hidden_field :product_id, value: product.id %>
+    </div>
+    <span class="w-1/5 text-sm font-semibold text-center"><%= number_to_currency order_item.unit_price %></span>
+    <span class="w-1/5 text-sm font-semibold text-center"><%= number_to_currency order_item.total_price %></span>
+  <% end %>
+</div>
