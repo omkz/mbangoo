@@ -10,7 +10,9 @@
   </head>
   <body class= "container p-5 mx-auto">
     <header>
-      <%= render "shared/flash_notice" %>
+      <div id="flash" class="flash">
+        <%= render "shared/flash_notice" %>
+      </div>
       <%= render "shared/navbar" %>
     </header>
     <%= yield %>

@@ -5,7 +5,7 @@ class OrderItemsController < ApplicationController
     if @order
       @order.increment(:quantity)
       @order.save
-      redirect_to cart_url
+      flash.now[:notice] = "Added product to cart"
     else
       @order = current_order
       @order.order_items.new(order_item_params) do
@@ -13,7 +13,6 @@ class OrderItemsController < ApplicationController
       end
       @order.save
       session[:order_id] = @order.id
-      redirect_to cart_url
     end
   end
 
