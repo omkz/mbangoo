@@ -1,4 +1,4 @@
-<div class="flex items-center px-6 py-5 -mx-8 hover:bg-gray-100">
+<div id="<%= dom_id(order_item)%>" class="flex items-center px-6 py-5 -mx-8 hover:bg-gray-100">
   <div class="flex w-2/5"> <!-- product -->
     <div class="w-20">
       <%= image_tag product.images.first, class: "h-24" if product.images.attached? %>
