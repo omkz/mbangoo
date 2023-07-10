@@ -3,7 +3,7 @@ class OrderItemsController < ApplicationController
   def create
     @order = OrderItem.where("product_id = ? AND order_id = ?", params[:order_item][:product_id], session[:order_id]).first
     if @order
-      @order.increment(:quantity)
+      @order.update(quantity: @order.quantity + params[:order_item][:quantity].to_i)
       @order.save
       flash.now[:notice] = "Added product to cart"
     else
@@ -13,6 +13,7 @@ class OrderItemsController < ApplicationController
       end
       @order.save
       session[:order_id] = @order.id
+      flash.now[:notice] = "Added product to cart"
     end
   end
 

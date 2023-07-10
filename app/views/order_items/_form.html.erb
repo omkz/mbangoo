@@ -56,7 +56,7 @@
   <h2 class="mt-8 text-base text-gray-900">Quantity</h2>
   <div class="flex flex-wrap items-center gap-1 mt-3 select-none">
     <%= form.hidden_field :product_id, value: @product.id %>
-    <%= form.number_field :quantity, value: 1, class: "w-16", min: 1  %>
+    <%= form.number_field :quantity, value: @order_item.quantity.to_i, class: "w-16", min: 1  %>
   </div>
   <div class="flex flex-col items-center justify-between py-4 mt-10 space-y-4 border-t border-b sm:flex-row sm:space-y-0">
     <div class="flex items-end">
