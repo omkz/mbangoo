@@ -1,26 +1,28 @@
 class PaymentsController < ApplicationController
-  def new
-  end
-  
-  def create
-    # Amount in cents
+  def charges
     @amount = current_order.subtotal
+      payment_intent = Stripe::PaymentIntent.create(
+      amount:  (@amount * 100).to_i,
+      currency: 'usd',
+      automatic_payment_methods: {
+        enabled: true,
+      },
+      metadata: {order_id: "#{current_order.id}"},
+      )
 
-    customer = Stripe::Customer.create email: params[:"cardholder-email"],
-                                       :source => params[:stripeToken]
+    @payment_intent_client_secret = payment_intent.client_secret;
 
-    charge = Stripe::Charge.create(
-        :customer => customer.id,
-        :amount => (@amount * 100).to_i,
-        :description => 'Waroong Stripe customer',
-        :currency => 'usd'
-    )
-
-    session[:order_id] = nil
-
-  rescue Stripe::CardError => e
+  rescue Stripe::StripeError => e
     flash[:notice] = e.message
-    redirect_to new_charge_path
+    redirect_to root_path
+
+  rescue => e
+    flash[:notice] = e.message
+    redirect_to root_path
+  end
+
+  def index
+   session[:order_id] = nil
   end
 
 end
