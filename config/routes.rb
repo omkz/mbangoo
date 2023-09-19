@@ -4,6 +4,7 @@ Rails.application.routes.draw do
   resources :order_items, only: [:create, :update, :destroy]
   resources :payments, only: [:index] do
     get 'charges', on: :collection
+    post 'webhook', on: :collection
   end
 
   namespace :ngadmin do
@@ -15,4 +16,5 @@ Rails.application.routes.draw do
   devise_for :users
 
   root "home#index"
+
 end
