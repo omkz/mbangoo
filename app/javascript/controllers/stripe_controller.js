@@ -1,75 +1,102 @@
-import { Controller } from "@hotwired/stimulus"
+import { Controller } from "@hotwired/stimulus";
 
 export default class extends Controller {
-    static targets = [ 'cardElement', 'cardErrors', 'form' ]
+  static targets = [
+    "paymentElement",
+    "paymentErrors",
+    "form",
+    "linkAuthenticationElement",
+  ];
 
-    connect() {
-        var stripe = Stripe(this.element.getAttribute('data-stripe-key'));
-        var elements = stripe.elements();
-        var style = {
-            base: {
-                color: '#32325d',
-                fontFamily: '"Helvetica Neue", Helvetica, sans-serif',
-                fontSmoothing: 'antialiased',
-                fontSize: '16px',
-                '::placeholder': {
-                    color: '#aab7c4'
-                }
-            },
-            invalid: {
-                color: '#fa755a',
-                iconColor: '#fa755a'
-            }
-        };
+  connect() {
+    const clientSecret = this.element.getAttribute("data-secret-key");
+    const stripe = Stripe(this.element.getAttribute("data-publishable-key"));
+    const returnUrl = this.element.getAttribute("data-return-url");
 
-        var card = elements.create('card', {
-            style: style
-        });
+    const appearance = {
+      theme: "stripe",
+    };
 
-        card.mount(this.cardElementTarget);
+    const elements = stripe.elements({ appearance, clientSecret });
 
-        // Handle real-time validation errors from the card Element.
-        let controller = this;
-        card.addEventListener('change', function (event) {
-            var displayError = controller.cardErrorsTarget;
-            if (event.error) {
-                displayError.textContent = event.error.message;
-            } else {
-                displayError.textContent = '';
-            }
-        });
+    const linkAuthenticationElement = elements.create("linkAuthentication");
+    linkAuthenticationElement.mount(this.linkAuthenticationElementTarget);
 
-        // Handle form submission.
-        var form = controller.formTarget;
-        form.addEventListener('submit', function (event) {
-            event.preventDefault();
+    const paymentElementOptions = {
+      layout: "tabs",
+    };
 
-            stripe.createToken(card).then(function (result) {
-                if (result.error) {
-                    // Inform the user if there was an error.
-                    var errorElement = this.cardErrorsTarget;
-                    errorElement.textContent = result.error.message;
-                } else {
-                    // Send the token to your server.
-                    controller.stripeTokenHandler(result.token);
-                }
-            });
-        });
+    const paymentElement = elements.create("payment", paymentElementOptions);
+    paymentElement.mount(this.paymentElementTarget);
 
+    document
+      .querySelector("#payment-form")
+      .addEventListener("submit", handleSubmit);
 
+    async function handleSubmit(e) {
+      e.preventDefault();
+
+      const { error } = await stripe.confirmPayment({
+        elements,
+        confirmParams: {
+          return_url: returnUrl
+        },
+      });
+
+      // This point will only be reached if there is an immediate error when
+      // confirming the payment. Otherwise, your customer will be redirected to
+      // your `return_url`. For some payment methods like iDEAL, your customer will
+      // be redirected to an intermediate site first to authorize the payment, then
+      // redirected to the `return_url`.
+      if (error.type === "card_error" || error.type === "validation_error") {
+        showMessage(error.message);
+      } else {
+        showMessage("An unexpected error occurred.");
+      }
     }
 
-    // Submit the form with the token ID.
-    stripeTokenHandler(token) {
-        // Insert the token ID into the form so it gets submitted to the server
-        var form = this.formTarget;
-        var hiddenInput = document.createElement('input');
-        hiddenInput.setAttribute('type', 'hidden');
-        hiddenInput.setAttribute('name', 'stripeToken');
-        hiddenInput.setAttribute('value', token.id);
-        form.appendChild(hiddenInput);
+    // Fetches the payment intent status after payment submission
+    async function checkStatus() {
+      const clientSecret = new URLSearchParams(window.location.search).get(
+        "payment_intent_client_secret"
+      );
 
-        // Submit the form
-        form.submit();
+      if (!clientSecret) {
+        return;
+      }
+
+      const { paymentIntent } = await stripe.retrievePaymentIntent(
+        clientSecret
+      );
+
+      switch (paymentIntent.status) {
+        case "succeeded":
+          showMessage("Payment succeeded!");
+          break;
+        case "processing":
+          showMessage("Your payment is processing.");
+          break;
+        case "requires_payment_method":
+          showMessage("Your payment was not successful, please try again.");
+          break;
+        default:
+          showMessage("Something went wrong.");
+          break;
+      }
     }
+
+    // ------- UI helpers -------
+
+    function showMessage(messageText) {
+      const messageContainer = document.querySelector("#payment-message");
+
+      messageContainer.classList.remove("hidden");
+      messageContainer.textContent = messageText;
+
+      setTimeout(function () {
+        messageContainer.classList.add("hidden");
+        messageContainer.textContent = "";
+      }, 4000);
+    }
+  }
 }

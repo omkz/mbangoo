@@ -1,0 +1,25 @@
+<script src="https://js.stripe.com/v3/"></script>
+<div id="payment-form" class="flex items-center justify-center h-screen overflow-hidden bg-[#6F4E37]">
+  <%= form_with url: "/payments", method: :post, class: "px-8 pt-6 pb-8 mb-4 bg-white rounded shadow-md", data: { controller: 'stripe', target: 'stripe.form',
+  'publishable-key': Rails.application.credentials.dig(:stripe, :publishable_key),
+  'secret-key': @payment_intent_client_secret,
+  'return-url': Rails.application.routes.url_helpers.payments_url } do |f| %>
+    <div class="mb-6">
+      <label class="block mb-2 text-sm font-bold text-gray-700" for="card-element">
+        Credit or debit card
+      </label>
+      <div data-stripe-target="linkAuthenticationElement" id="link-authentication-element">
+        <!--Stripe.js injects the Link Authentication Element-->
+      </div>
+      <div data-stripe-target="paymentElement" class="w-100">
+        <!-- A Stripe Element will be inserted here. -->
+      </div>
+      <!-- Used to display form errors. -->
+      <div data-stripe-target="paymentErrors" role="alert" class="text-center alert-danger"></div>
+    </div>
+    <div class="flex items-center justify-between">
+      <%= f.submit "Submit Payment", class: "px-4 py-2 font-bold text-white bg-blue-500 rounded hover:bg-blue-700 focus:outline-none focus:shadow-outline" %>
+    </div>
+    <div id="payment-message" class="hidden"></div>
+  <% end %>
+</div>

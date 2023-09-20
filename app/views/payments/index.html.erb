@@ -1,0 +1,5 @@
+<% if params["redirect_status"] == "succeeded" %>
+  <div class="alert alert-success">Payment successful</div>
+<% elsif params["redirect_status"] == "failed" %>
+  <div class="alert alert-danger">Payment failed. Please try again with a different payment method.</div>
+<% end %>

@@ -55,7 +55,7 @@
             <span>Total cost</span>
             <span><%= number_to_currency current_order.subtotal %></span>
           </div>
-           <%= link_to "Checkout", new_payment_path, class: "block w-full py-3 text-sm font-semibold text-white uppercase bg-indigo-500 hover:bg-indigo-600 text-center", data: { turbo: false } %>
+           <%= link_to "Checkout", charges_payments_path, class: "block w-full py-3 text-sm font-semibold text-white uppercase bg-indigo-500 hover:bg-indigo-600 text-center", data: { turbo: false } %>
         </div>
       </div>
     </div>
