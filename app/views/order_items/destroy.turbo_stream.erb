@@ -1,2 +1,3 @@
 <%= turbo_stream.update("flash", partial: "shared/flash_notice") %>
+<%= turbo_stream.update("cart_menu", partial: "shared/cart_menu") %>
 <%= turbo_stream.remove(dom_id(@order_item)) %>
