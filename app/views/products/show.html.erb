@@ -30,21 +30,16 @@
         <div class="lg:flex lg:items-start">
           <div class="lg:order-2 lg:ml-5">
             <div class="max-w-xl overflow-hidden rounded-lg">
-              <%# <img class="object-cover w-full h-full max-w-full" src="/images/JHxMnVrtPMdcNU1s_7g7f.png" alt="" /> %>
               <%= image_tag @product.images.first, class: "object-cover w-full h-[500px] max-w-[500px]" %>
             </div>
           </div>
           <div class="w-full mt-2 lg:order-1 lg:w-32 lg:flex-shrink-0">
-            <div class="flex flex-row items-start lg:flex-col">
-              <button type="button" class="h-20 mb-3 overflow-hidden text-center border-2 border-gray-900 rounded-lg flex-0 aspect-square">
-                <%= image_tag @product.images.first, class: "object-cover w-full h-full" %>
-              </button>
-              <button type="button" class="h-20 mb-3 overflow-hidden text-center border-2 border-transparent rounded-lg flex-0 aspect-square">
-                <img class="object-cover w-full h-full" src="/images/JHxMnVrtPMdcNU1s_7g7f.png" alt="" />
-              </button>
-              <button type="button" class="h-20 mb-3 overflow-hidden text-center border-2 border-transparent rounded-lg flex-0 aspect-square">
-                <img class="object-cover w-full h-full" src="/images/JHxMnVrtPMdcNU1s_7g7f.png" alt="" />
-              </button>
+            <div class="flex flex-row items-start pswp-gallery lg:flex-col" data-controller="photoswipe" >
+              <% @product.images.each do |image| %>
+                <%= link_to image, "data-pswp-width": "1875",  "data-pswp-height": "2500" do %>
+                  <%= image_tag image, class: "object-cover w-full h-full" %>
+                <% end %>
+              <% end %>
             </div>
           </div>
         </div>
@@ -52,7 +47,6 @@
       <div class="lg:col-span-2 lg:row-span-2 lg:row-end-2">
         <%= render  "order_items/form" %>
       </div>
-      
       <div class="lg:col-span-3">
         <div class="border-b border-gray-300">
           <nav class="flex gap-4">
