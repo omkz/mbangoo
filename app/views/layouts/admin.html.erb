@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Mbango</title>
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <%= csrf_meta_tags %>
+    <%= csp_meta_tag %>
+    <%= stylesheet_link_tag "application", "data-turbo-track": "reload" %>
+    <%= javascript_include_tag "application", "data-turbo-track": "reload", defer: true %>
+  </head>
+  <body>
+    <%= content_for :title, "Admin Dashboard" %>
+    <div class="flex min-h-screen">
+      <%= render "shared/admin_menu" %>
+      <!-- Main Content -->
+      <div class="flex-1 p-10 bg-gray-100">
+        <%= yield %>
+      </div>
+    </div>
+  </div>
+</body>
+</html>
