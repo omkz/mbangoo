@@ -7,12 +7,6 @@ Rails.application.routes.draw do
     post 'webhook', on: :collection
   end
 
-  namespace :ngadmin do
-      resources :products
-      resources :users
-
-      root to: "products#index"
-    end
   devise_for :users
 
   root "home#index"
