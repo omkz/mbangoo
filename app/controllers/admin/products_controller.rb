@@ -1,5 +1,5 @@
 module Admin
-  class ProductsController < ApplicationController
+  class ProductsController < BaseController
     layout "admin"
     before_action :set_product, only: %i[ show edit update ]
     def index

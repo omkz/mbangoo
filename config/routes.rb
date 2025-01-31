@@ -3,6 +3,7 @@ Rails.application.routes.draw do
     resources :dashboard, only: [:index]
     resources :products
     resources :option_types
+    resources :option_values
   end
 
   resources :products

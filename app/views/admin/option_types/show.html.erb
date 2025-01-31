@@ -1,0 +1,15 @@
+<div class="w-full">
+  <div class="mt-4">
+    <div id="details-tab" class="tab-content">
+      <h1 class="text-4xl font-bold"><%= @option_type.name %></h1>
+      <%= render "admin/option_values/form", option_value: @option_value, option_type: @option_type %>
+      <div id="option_values" class="min-w-full">
+        <% if @option_values.present? %>
+          <% @option_values.each do |option_value| %>
+            <%= render option_value %>
+          <% end %>
+        <% end %>
+      </div>
+    </div>
+  </div>
+</div>
