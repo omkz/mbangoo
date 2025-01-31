@@ -17,8 +17,6 @@ user = User.create!(
   password: "password",
   password_confirmation: "password"
 )
-user.roles << user_role
-
 
 OrderStatus.delete_all
 OrderStatus.create! id: 1, name: "pending"
