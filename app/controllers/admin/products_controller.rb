@@ -1,7 +1,7 @@
 module Admin
   class ProductsController < ApplicationController
     layout "admin"
-    before_action :set_product, only: %i[ show edit ]
+    before_action :set_product, only: %i[ show edit update ]
     def index
       @products = Product.all
     end
@@ -30,6 +30,19 @@ module Admin
         end
       end
     end
+
+    def update
+      respond_to do |format|
+        if @product.update(product_params)
+          format.html { redirect_to admin_product_path(@product), notice: "Product was successfully updated." }
+          format.json { render :show, status: :ok, location: @product }
+        else
+          format.html { render :edit, status: :unprocessable_entity }
+          format.json { render json: @product.errors, status: :unprocessable_entity }
+        end
+      end
+    end
+  
 
     private
    
