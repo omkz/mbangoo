@@ -2,6 +2,7 @@ Rails.application.routes.draw do
   namespace :admin do
     resources :dashboard, only: [:index]
     resources :products
+    resources :option_types
   end
 
   resources :products
