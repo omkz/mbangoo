@@ -3,7 +3,6 @@ Rails.application.routes.draw do
     resources :dashboard, only: [:index]
     resources :products
   end
-  
 
   resources :products
   resource :cart, only: [:show]
