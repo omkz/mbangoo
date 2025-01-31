@@ -1,8 +1,9 @@
 module Admin
-  class DashboardController < ApplicationController
+  class DashboardController < BaseController
     layout "admin"
+
     def index
-      # Logic dashboard admin
     end
+
   end
 end
