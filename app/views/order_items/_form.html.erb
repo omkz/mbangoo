@@ -59,9 +59,6 @@
     <%= form.number_field :quantity, value: @order_item.quantity.to_i, class: "w-16", min: 1  %>
   </div>
   <div class="flex flex-col items-center justify-between py-4 mt-10 space-y-4 border-t border-b sm:flex-row sm:space-y-0">
-    <div class="flex items-end">
-      <h1 class="text-3xl font-bold"><%= number_to_currency @product.price %></h1>
-    </div>
     <%= form.button type: "submit", class: "inline-flex items-center justify-center px-12 py-3 text-base font-bold text-center text-white transition-all duration-200 ease-in-out bg-gray-900 border-2 border-transparent rounded-md bg-none focus:shadow hover:bg-gray-800" do %>
       <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 mr-3 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
         <path stroke-linecap="round" stroke-linejoin="round" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />

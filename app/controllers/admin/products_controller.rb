@@ -64,6 +64,7 @@ module Admin
           :is_master, 
           :_destroy
         ],
+        images:[],
         option_type_ids: []
       )
     end
