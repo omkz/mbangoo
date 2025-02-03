@@ -1,16 +1,20 @@
-<div class="container mx-auto px-4 sm:px-6 lg:px-8">
-  <div class="border-b border-gray-200 mb-4">
+<div class="w-full">
+  <div class="border-b border-gray-200">
     <nav class="flex -mb-px space-x-8" id="tabs-nav">
       <%= link_to "Product", edit_admin_product_path(@product), class: "tab-link border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 group inline-flex items-center py-4 px-1 border-b-2 font-medium text-sm" %>
       <%= link_to "Variants", admin_product_variants_path(@product), class: "tab-link border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 group inline-flex items-center py-4 px-1 border-b-2 font-medium text-sm" %>
       <%= link_to "Images", "#", class: "tab-link border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 group inline-flex items-center py-4 px-1 border-b-2 font-medium text-sm" %>
     </nav>
   </div>
-  
   <div class="mt-4">
-    <div id="product-tab" class="tab-content">
-      <%= render "form", product: @product %>
+    <div id="details-tab" class="tab-content">
+      <div class="flex items-center justify-between">
+        <h1 class="text-4xl font-bold">Variant</h1>
+        <%= link_to "New Variants", new_admin_product_variant_path, class: "rounded-md px-3.5 py-2.5 bg-blue-600 hover:bg-blue-500 text-white block font-medium" %>
+      </div>
+      <% @variants.each do |variant| %>
+        <%= variant.sku %> <br>
+      <% end %>
     </div>
   </div>
-  
 </div>

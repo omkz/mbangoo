@@ -32,6 +32,10 @@ class Product < ApplicationRecord
     master_variant.present?
   end
 
+  def available_option_types
+    option_types
+  end
+
   private
 
   def only_one_master_variant

@@ -1,7 +1,9 @@
 Rails.application.routes.draw do
   namespace :admin do
     resources :dashboard, only: [:index]
-    resources :products
+    resources :products do
+      resources :variants
+    end
     resources :option_types
     resources :option_values
   end

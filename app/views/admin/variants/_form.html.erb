@@ -1,0 +1,59 @@
+<div class="w-full">
+  <div class="border-b border-gray-200">
+    <nav class="flex -mb-px space-x-8" id="tabs-nav">
+      <%= link_to "Product", edit_admin_product_path(@product), class: "tab-link border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 group inline-flex items-center py-4 px-1 border-b-2 font-medium text-sm" %>
+      <%= link_to "Variants", admin_product_variants_path(@product), class: "tab-link border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 group inline-flex items-center py-4 px-1 border-b-2 font-medium text-sm" %>
+      <%= link_to "Images", "#", class: "tab-link border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 group inline-flex items-center py-4 px-1 border-b-2 font-medium text-sm" %>
+    </nav>
+  </div>
+  <div class="mt-4">
+    <div id="variants-tab" class=" tab-content">
+      <div class="p-6 bg-white shadow sm:rounded-lg">
+        <h3 class="text-lg font-medium leading-6 text-gray-900">Product Variants</h3>
+        <%= form_with(model: [:admin, @variant], class: "space-y-4") do |form| %>
+          <% if @variant.errors.any? %>
+            <div class="relative px-4 py-3 text-red-700 bg-red-100 border border-red-400 rounded" role="alert">
+              <h2 class="font-bold"><%= pluralize(@variant.errors.count, "error") %> prohibited this variant from being saved:</h2>
+              <ul class="list-disc list-inside">
+                <% @variant.errors.full_messages.each do |message| %>
+                  <li><%= message %></li>
+                <% end %>
+              </ul>
+            </div>
+          <% end %>
+          <div class="mb-4">
+            <%= form.label :sku, class: "block text-gray-700 text-sm font-bold mb-2" %>
+            <%= form.text_field :sku, class: "shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" %>
+          </div>
+          <div class="mb-4">
+            <%= form.label :price, class: "block text-gray-700 text-sm font-bold mb-2" %>
+            <%= form.number_field :price, step: 0.01, class: "shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" %>
+          </div>
+          <div class="mb-4">
+            <%= form.label :stock, class: "block text-gray-700 text-sm font-bold mb-2" %>
+            <%= form.number_field :stock, class: "shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" %>
+          </div>
+          <% @product.available_option_types.each do |option_type| %>
+            <div class="mb-4">
+              <%= form.label "option_type_#{option_type.id}", option_type.name, class: "block text-gray-700 text-sm font-bold mb-2" %>
+              <% variant_option = form.object.variant_options.find { |vo| vo.option_value.nil? || vo.option_value.option_type == option_type } %>
+              <%= form.fields_for :variant_options, variant_option do |variant_option_form| %>
+                <%= variant_option_form.collection_select(
+                      :option_value_id,
+                      option_type.option_values,
+                      :id,
+                      :value,
+                      { prompt: "Select #{option_type.name}" },
+                      { class: "shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" }
+                    ) %>
+              <% end %>
+            </div>
+          <% end %>
+          <div class="flex items-center justify-between">
+            <%= form.submit "Create Variant", class: "bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline" %>
+          </div>
+        <% end %>
+      </div>
+    </div>
+  </div>
+</div>
