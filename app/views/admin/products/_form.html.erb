@@ -19,6 +19,44 @@
                    class: ["block shadow rounded-md border outline-none px-3 py-2 mt-2 w-full", {"border-gray-400 focus:outline-blue-600": product.errors[:status].none?, "border-red-400 focus:outline-red-600": product.errors[:status].any?}] %>
   </div>
   
+  <div class="mb-4">
+    <%= form.label :option_type_ids, "Product Option Types" %>
+    <%= form.collection_check_boxes :option_type_ids, OptionType.all, :id, :name do |b| %>
+      <div class="flex items-center">
+        <%= b.check_box(class: "mr-2") %>
+        <%= b.label(class: "text-gray-700") %>
+      </div>
+    <% end %>
+  </div>
+  
+  <div id="variants-section">
+    <%= form.fields_for :variants do |variant_form| %>
+      <% if product.persisted? && !variant_form.object.is_master? %>
+        <% next %>
+      <% end %>
+      
+      <div class="variant-section master-variant bg-blue-50 border p-4 mb-4">
+        <h3 class="text-lg font-bold mb-3 text-blue-700">Master Variant</h3>
+        
+        <%= variant_form.hidden_field :id %>
+        <%= variant_form.hidden_field :is_master, value: true %>
+        
+        <div class="my-5">
+          <%= variant_form.label :sku, "SKU" %>
+          <%= variant_form.text_field :sku, class: "block shadow rounded-md border px-3 py-2 mt-2 w-full" %>
+        </div>
+        <div class="my-5">
+          <%= variant_form.label :price, "Price" %>
+          <%= variant_form.number_field :price, step: 0.01, class: "block shadow rounded-md border px-3 py-2 mt-2 w-full" %>
+        </div>
+        <div class="my-5">
+          <%= variant_form.label :stock, "Stock" %>
+          <%= variant_form.number_field :stock, step: 1, class: "block shadow rounded-md border px-3 py-2 mt-2 w-full" %>
+        </div>
+      </div>
+    <% end %>
+  </div>
+  
   <div class="inline">
     <%= form.submit class: "rounded-md px-3.5 py-2.5 bg-blue-600 hover:bg-blue-500 text-white inline-block font-medium cursor-pointer" %>
   </div>

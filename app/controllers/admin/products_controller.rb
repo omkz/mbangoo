@@ -8,6 +8,7 @@ module Admin
 
     def new
       @product = Product.new
+      @product.variants.build
     end
 
     def show
@@ -54,7 +55,17 @@ module Admin
       params.require(:product).permit(
         :name, 
         :description, 
-        :status)
+        :status, 
+        variants_attributes: [
+          :id, 
+          :sku, 
+          :price, 
+          :stock, 
+          :is_master, 
+          :_destroy
+        ],
+        option_type_ids: []
+      )
     end
   end
 end
