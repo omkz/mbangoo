@@ -73,6 +73,7 @@
         <%= number_to_currency(@product.master_variant&.price || 0) %>
       </span>
     </p>
+    <p id="dynamic-stock" class="text-sm font-medium text-gray-600"></p>
     <p id="selected-variant-sku" class="text-sm text-gray-600"></p>
     <p id="variant-selection-error" class="text-sm text-red-600"></p>
   </div>
@@ -162,16 +163,31 @@
       const quantity = parseInt(quantityInput.value) || 1;
       let selectedVariantPrice = basePrice;
       let selectedVariantSku = null;
+      let selectedVariantStock = 0;
 
       const matchingVariant = findMatchingVariant();
 
       if (matchingVariant) {
         selectedVariantPrice = matchingVariant.price;
         selectedVariantSku = matchingVariant.sku;
+        selectedVariantStock = matchingVariant.stock;
+
+        // Update stock display
+        const stockDisplayElement = document.getElementById('dynamic-stock');
+        if (stockDisplayElement) {
+          stockDisplayElement.textContent = `${selectedVariantStock} in stock`;
+        }
+
         variantSelectionErrorElement.textContent = '';
       } else {
         // No matching variant found
-        variantSelectionErrorElement.textContent = 'No variant available for selected options. Using base price.';
+        variantSelectionErrorElement.textContent = 'No variant available for selected options.';
+
+        // Clear stock display
+        const stockDisplayElement = document.getElementById('dynamic-stock');
+        if (stockDisplayElement) {
+          stockDisplayElement.textContent = 'Stock: Not available';
+        }
       }
 
       const totalPrice = selectedVariantPrice * quantity;
@@ -182,8 +198,15 @@
       } else {
         selectedVariantSkuElement.textContent = '';
       }
-    }
 
+      // Validate quantity against available stock
+      const maxQuantity = selectedVariantStock || 1;
+      quantityInput.max = maxQuantity;
+      if (quantity > maxQuantity) {
+        quantityInput.value = maxQuantity;
+        variantSelectionErrorElement.textContent = `Maximum available quantity is ${maxQuantity}`;
+      }
+    }
     // Initial default selection
     const defaultOptions = document.querySelectorAll('.default-selected');
     defaultOptions.forEach(option => {
