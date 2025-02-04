@@ -1,6 +1,5 @@
 class Product < ApplicationRecord
   has_many_attached :images
-  has_many :order_items
   has_many :variants, class_name: "ProductVariant", dependent: :destroy
   accepts_nested_attributes_for :variants,
     allow_destroy: true,
@@ -36,6 +35,10 @@ class Product < ApplicationRecord
 
   def available_option_types
     option_types
+  end
+
+  def available_variants
+    product_variants.where.not(is_master: true)
   end
 
   private
