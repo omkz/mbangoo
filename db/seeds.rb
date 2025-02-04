@@ -187,3 +187,10 @@ puts "Seed data created successfully!"
 puts "Product: #{product.name}"
 puts "Variants: #{product.variants.count}"
 puts "Option Types: #{product.option_types.count}"
+
+#order status
+OrderStatus.delete_all
+OrderStatus.create! id: 1, name: "pending"
+OrderStatus.create! id: 2, name: "processing"
+OrderStatus.create! id: 3, name: "failed"
+OrderStatus.create! id: 4, name: "succeed"
