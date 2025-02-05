@@ -1,0 +1,33 @@
+<div class="container px-4 py-8 mx-auto">
+  <div class="max-w-lg p-6 mx-auto bg-white rounded-lg shadow-md">
+    <h2 class="mb-6 text-2xl font-bold text-center text-gray-800">
+      <%= action_name.capitalize %> Category
+    </h2>
+    <%= form_with(model: [:admin, @category], local: true, class: 'space-y-4') do |form| %>
+      <% if @category.errors.any? %>
+        <div class="relative px-4 py-3 text-red-700 bg-red-100 border border-red-400 rounded" role="alert">
+          <strong class="font-bold">Oops! </strong>
+          <span class="block sm:inline">
+            <%= @category.errors.full_messages.join(', ') %>
+          </span>
+        </div>
+      <% end %>
+      <div class="mb-4">
+        <%= form.label :name, class: 'block text-gray-700 text-sm font-bold mb-2' %>
+        <%= form.text_field :name, class: 'shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline' %>
+      </div>
+      <div class="mb-4">
+        <%= form.label :description, class: 'block text-gray-700 text-sm font-bold mb-2' %>
+        <%= form.text_area :description, class: 'shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline' %>
+      </div>
+      <div class="mb-4">
+        <%= form.label :parent_id, 'Parent Category', class: 'block text-gray-700 text-sm font-bold mb-2' %>
+        <%= form.collection_select :parent_id, @parent_categories, :id, :name, { include_blank: 'Select Parent Category' }, class: 'shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline' %>
+      </div>
+      <div class="flex items-center justify-between">
+        <%= form.submit class: 'bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline' %>
+        <%= link_to 'Cancel', admin_categories_path, class: 'inline-block align-baseline font-bold text-sm text-blue-500 hover:text-blue-800' %>
+      </div>
+    <% end %>
+  </div>
+</div>

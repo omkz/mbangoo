@@ -1,0 +1,24 @@
+<div class="pl-4">
+  <% categories.each do |category| %>
+    <div class="flex items-center">
+      <%= form.check_box :category_ids,
+          {
+            multiple: true,
+            checked: form.object.categories.include?(category),
+            class: 'mr-2 form-checkbox'
+          },
+          category.id,
+          nil
+      %>
+      <label class="<%= 'font-semibold' if category.children.any? %>">
+        <%= category.name %>
+      </label>
+    </div>
+    <% if category.children.any? %>
+      <%= render 'category_checkboxes',
+        categories: category.children,
+        form: form
+      %>
+    <% end %>
+  <% end %>
+</div>

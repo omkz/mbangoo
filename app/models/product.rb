@@ -1,6 +1,9 @@
 class Product < ApplicationRecord
   has_many_attached :images
 
+  has_many :product_categories
+  has_many :categories, through: :product_categories
+
   has_many :variants,
   -> { where(is_master: false)},
   inverse_of: :product,
@@ -39,6 +42,7 @@ class Product < ApplicationRecord
   enum :status, { active: 0, inactive: 1 }, validate: true
 
   validate :only_one_master_variant
+  validate :at_least_one_category
   
   def has_variants?
     variants.any?
@@ -60,6 +64,10 @@ class Product < ApplicationRecord
     if master_variants_count > 1
       errors.add(:base, "Only one master variant is allowed")
     end
+  end
+
+  def at_least_one_category
+    errors.add(:base, "Must have at least one category") if categories.empty?
   end
 
 end

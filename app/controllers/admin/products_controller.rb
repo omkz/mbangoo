@@ -22,7 +22,6 @@ module Admin
   
       respond_to do |format|
         if @product.save
-          # flash.now[:notice] = "Added product to cart"
           format.html { redirect_to admin_product_path(@product), notice: "Product was successfully created." }
           format.json { render :show, status: :created, location: admin_product_path(@product) }
         else
@@ -65,7 +64,8 @@ module Admin
           :_destroy
         ],
         images:[],
-        option_type_ids: []
+        option_type_ids: [],
+        category_ids: []
       )
     end
   end
