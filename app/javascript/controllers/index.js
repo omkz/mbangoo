@@ -12,3 +12,6 @@ application.register("photoswipe", PhotoswipeController)
 
 import StripeController from "./stripe_controller"
 application.register("stripe", StripeController)
+
+import VariantSelectionController from "./variant_selection_controller"
+application.register("variant-selection", VariantSelectionController)

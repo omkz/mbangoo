@@ -1,33 +1,48 @@
 class Product < ApplicationRecord
   has_many_attached :images
-  has_many :variants, class_name: "ProductVariant", dependent: :destroy
+
+  has_many :variants,
+  -> { where(is_master: false)},
+  inverse_of: :product,
+  class_name: 'ProductVariant',
+  dependent: :destroy
+
   accepts_nested_attributes_for :variants,
     allow_destroy: true,
     reject_if: :all_blank
+
+  has_many :variants_including_master,
+    -> { order(:sku) },
+    inverse_of: :product,
+    class_name: 'ProductVariant',
+    dependent: :destroy
+
+  has_one :master_variant,
+    -> { where(is_master: true) },
+    class_name: "ProductVariant",
+    dependent: :destroy
 
   has_many :variant_options, through: :variants
   has_many :product_option_types
   has_many :option_types, through: :product_option_types
 
-  accepts_nested_attributes_for :product_option_types, 
+  accepts_nested_attributes_for :product_option_types,
     allow_destroy: true,
     reject_if: :all_blank
 
-  accepts_nested_attributes_for :option_types, 
+  accepts_nested_attributes_for :option_types,
     allow_destroy: true,
     reject_if: :all_blank
-    
-  has_one :master_variant, 
-    -> { where(is_master: true) }, 
-    class_name: "ProductVariant", 
-    dependent: :destroy
 
   validates :name, presence: true
   validates :description, presence: true
   enum :status, { active: 0, inactive: 1 }, validate: true
 
   validate :only_one_master_variant
-
+  
+  def has_variants?
+    variants.any?
+  end
 
   def is_master?
     master_variant.present?
@@ -37,9 +52,6 @@ class Product < ApplicationRecord
     option_types
   end
 
-  def available_variants
-    product_variants.where.not(is_master: true)
-  end
 
   private
 
@@ -49,5 +61,5 @@ class Product < ApplicationRecord
       errors.add(:base, "Only one master variant is allowed")
     end
   end
-  
+
 end

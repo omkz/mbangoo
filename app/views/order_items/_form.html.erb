@@ -1,41 +1,30 @@
-<%= form_with(model: @order_item, class: "contents") do |form| %>
-  <h1 class="text-2xl font-bold text-gray-900 sm: sm:text-3xl"><%= @product.name %></h1>
-  <% if @product.variants.where.not(is_master: true).any? %>
+<%= form_with(
+      model: @order_item,
+      class: "contents",
+      data: {
+        controller: "variant-selection",
+        variant_selection_base_price_value: @product.formatted_price.to_f,
+        variant_selection_variants_value: @product.variants_json
+      }
+    ) do |form| %>
+  <h1 class="text-2xl font-bold text-gray-900 sm:text-3xl">
+    <%= @product.name %>
+  </h1>
+
+  <% if @product.has_variants? %>
     <% @product.option_types.each do |option_type| %>
-      <h2 class="mt-8 text-base text-gray-900"><%= option_type.name.capitalize %></h2>
-      <div class="flex flex-wrap items-center gap-1 mt-3 select-none option-type-container"
-           data-option-type="<%= option_type.name.downcase %>"
-           data-option-type-id="<%= option_type.id %>">
+      <h2 class="mt-8 text-base text-gray-900">
+        <%= option_type.name.capitalize %>
+      </h2>
+      <div class="flex flex-wrap items-center gap-1 mt-3 select-none option-type-container">
         <% option_type.option_values.each do |option_value| %>
-          <% matching_variants = @product.variants
-               .joins(:variant_options)
-               .where(variant_options: { option_value_id: option_value.id })
-               .where.not(is_master: true)
-               .where('stock > 0') %>
+          <% matching_variants = @product.find_matching_variants(option_value) %>
           <% if matching_variants.any? %>
-            <label class="variant-option <%= 'default-selected' if matching_variants.first == @product.variants.where.not(is_master: true).first %>"
-                   data-option-type="<%= option_type.name.downcase %>"
-                   data-option-value="<%= option_value.value %>"
-                   data-option-type-id="<%= option_type.id %>"
-                   data-option-value-id="<%= option_value.id %>"
-                   data-variant-stock="<%= matching_variants.sum(:stock) %>">
-              <input type="radio"
-                     name="<%= option_type.name.downcase %>"
-                     value="<%= option_value.value %>"
-                     class="sr-only peer variant-radio"
-                     data-option-type="<%= option_type.name.downcase %>"
-                     data-option-value="<%= option_value.value %>"
-                     data-option-type-id="<%= option_type.id %>"
-                     data-option-value-id="<%= option_value.id %>"
-                     <%= 'checked' if matching_variants.first == @product.variants.where.not(is_master: true).first %>
-                     <%= 'disabled' if matching_variants.sum(:stock) == 0 %> />
-              <p class="px-6 py-2 font-bold border border-black rounded-lg
-                        peer-checked:bg-black peer-checked:text-white
-                        <%= 'opacity-50 cursor-not-allowed' if matching_variants.sum(:stock) == 0 %>">
-                <%= option_value.value %>
-                <%= " (Out of Stock)" if matching_variants.sum(:stock) == 0 %>
-              </p>
-            </label>
+            <%= render 'variant_option_label', 
+                option_type: option_type, 
+                option_value: option_value, 
+                matching_variants: matching_variants 
+            %>
           <% end %>
         <% end %>
       </div>
@@ -43,40 +32,44 @@
   <% else %>
     <p class="text-yellow-600">No variants available for this product.</p>
   <% end %>
+
   <h2 class="mt-8 text-base text-gray-900">Quantity</h2>
   <div class="flex flex-wrap items-center gap-1 mt-3 select-none">
-    <%= form.hidden_field :product_id, value: @product.id %>
+    <%= form.hidden_field :product_variant_id,
+        id: 'selected-variant-id',
+        data: {
+          'variant-selection-target': 'selectedVariantId'
+        } %>
     <%= form.number_field :quantity,
         value: @order_item.quantity.to_i || 1,
         class: "w-16",
         min: 1,
-        id: "quantity-input" %>
+        id: "quantity-input",
+        data: {
+          'variant-selection-target': 'quantityInput',
+          'action': 'change->variant-selection#quantityChanged'
+        } %>
   </div>
+
   <div class="mt-4">
     <p class="text-xl font-bold">
-      Price: <span id="dynamic-price"
-                   data-base-price="<%= @product.master_variant&.price || 0 %>"
-                   data-variants="<%= @product.variants
-                     .where.not(is_master: true)
-                     .includes(:variant_options, :option_values)
-                     .to_json(
-                       include: {
-                         variant_options: {
-                           include: {
-                             option_value: { only: [:value, :option_type_id, :id] }
-                           },
-                           only: []
-                         }
-                       },
-                       only: [:id, :price, :sku, :stock]
-                     ) %>">
-        <%= number_to_currency(@product.master_variant&.price || 0) %>
+      Price:
+      <span id="dynamic-price"
+            data-variant-selection-target="dynamicPrice">
+        <%= @product.formatted_price %>
       </span>
     </p>
-    <p id="dynamic-stock" class="text-sm font-medium text-gray-600"></p>
-    <p id="selected-variant-sku" class="text-sm text-gray-600"></p>
-    <p id="variant-selection-error" class="text-sm text-red-600"></p>
+    <p id="dynamic-stock"
+       data-variant-selection-target="dynamicStock"
+       class="text-sm font-medium text-gray-600"></p>
+    <p id="selected-variant-sku"
+       data-variant-selection-target="selectedVariantSku"
+       class="text-sm text-gray-600"></p>
+    <p id="variant-selection-error"
+       data-variant-selection-target="variantSelectionError"
+       class="text-sm text-red-600"></p>
   </div>
+
   <div class="flex flex-col items-center justify-between py-4 mt-10 space-y-4 border-t border-b sm:flex-row sm:space-y-0">
     <%= form.button type: "submit", class: "inline-flex items-center justify-center px-12 py-3 text-base font-bold text-center text-white transition-all duration-200 ease-in-out bg-gray-900 border-2 border-transparent rounded-md bg-none focus:shadow hover:bg-gray-800" do %>
       <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 mr-3 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
@@ -85,6 +78,7 @@
       Add to cart
     <% end %>
   </div>
+
   <ul class="mt-8 space-y-2">
     <li class="flex items-center text-sm font-medium text-left text-gray-600">
       <svg class="block w-5 h-5 mr-2 text-gray-500 align-middle" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -100,146 +94,3 @@
     </li>
   </ul>
 <% end %>
-<script>
-  document.addEventListener('DOMContentLoaded', function() {
-    const dynamicPriceElement = document.getElementById('dynamic-price');
-    const selectedVariantSkuElement = document.getElementById('selected-variant-sku');
-    const variantSelectionErrorElement = document.getElementById('variant-selection-error');
-    const quantityInput = document.getElementById('quantity-input');
-    const basePrice = parseFloat(dynamicPriceElement.dataset.basePrice);
-    const variants = JSON.parse(dynamicPriceElement.dataset.variants);
-    const optionTypeContainers = document.querySelectorAll('.option-type-container');
-
-    let selectedOptions = {};
-    let selectedOptionIds = {};
-
-    function findMatchingVariant() {
-      console.log('All Variants:', variants);
-      console.log('Selected Options:', selectedOptions);
-      console.log('Selected Option IDs:', selectedOptionIds);
-
-      // Find variants that match ALL selected option types
-        const matchingVariants = variants.filter(variant => {
-        // Check if the variant has all the selected option values
-        const variantOptionValues = variant.variant_options.map(vo =>
-          vo.option_value.value
-        );
-
-        const selectedOptionValues = Object.values(selectedOptions);
-
-        console.log('Variant Option Values:', variantOptionValues);
-        console.log('Selected Option Values:', selectedOptionValues);
-
-        // Check if ALL selected option values are in the variant's option values
-        const isMatch = selectedOptionValues.every(selectedValue =>
-          variantOptionValues.includes(selectedValue)
-        );
-
-        console.log('Variant Match:', {
-          variant: variant,
-          isMatch: isMatch
-        });
-
-        return isMatch;
-      });
-
-      console.log('Matching Variants:', matchingVariants);
-
-      // Filter out variants with zero stock
-      const availableVariants = matchingVariants.filter(variant => {
-        const hasStock = variant.stock > 0;
-        console.log('Variant Stock Check:', variant, hasStock);
-        return hasStock;
-      });
-
-      console.log('Available Variants:', availableVariants);
-
-      // Return the first matching variant, or null if no match
-      return availableVariants.length > 0 ? availableVariants[0] : null;
-  }
-
-
-    function updatePrice() {
-      const quantity = parseInt(quantityInput.value) || 1;
-      let selectedVariantPrice = basePrice;
-      let selectedVariantSku = null;
-      let selectedVariantStock = 0;
-
-      const matchingVariant = findMatchingVariant();
-
-      if (matchingVariant) {
-        selectedVariantPrice = matchingVariant.price;
-        selectedVariantSku = matchingVariant.sku;
-        selectedVariantStock = matchingVariant.stock;
-
-        // Update stock display
-        const stockDisplayElement = document.getElementById('dynamic-stock');
-        if (stockDisplayElement) {
-          stockDisplayElement.textContent = `${selectedVariantStock} in stock`;
-        }
-
-        variantSelectionErrorElement.textContent = '';
-      } else {
-        // No matching variant found
-        variantSelectionErrorElement.textContent = 'No variant available for selected options.';
-
-        // Clear stock display
-        const stockDisplayElement = document.getElementById('dynamic-stock');
-        if (stockDisplayElement) {
-          stockDisplayElement.textContent = 'Stock: Not available';
-        }
-      }
-
-      const totalPrice = selectedVariantPrice * quantity;
-      dynamicPriceElement.textContent = `$${totalPrice.toFixed(2)}`;
-
-      if (selectedVariantSku) {
-        selectedVariantSkuElement.textContent = `Selected Variant: ${selectedVariantSku}`;
-      } else {
-        selectedVariantSkuElement.textContent = '';
-      }
-
-      // Validate quantity against available stock
-      const maxQuantity = selectedVariantStock || 1;
-      quantityInput.max = maxQuantity;
-      if (quantity > maxQuantity) {
-        quantityInput.value = maxQuantity;
-        variantSelectionErrorElement.textContent = `Maximum available quantity is ${maxQuantity}`;
-      }
-    }
-    // Initial default selection
-    const defaultOptions = document.querySelectorAll('.default-selected');
-    defaultOptions.forEach(option => {
-      const radio = option.querySelector('.variant-radio');
-      if (radio && !radio.disabled) {
-        radio.checked = true;
-        const optionType = radio.dataset.optionType;
-        const optionTypeId = radio.dataset.optionTypeId;
-        selectedOptions[optionType] = radio.dataset.optionValue;
-        selectedOptionIds[optionTypeId] = radio.dataset.optionValue;
-      }
-    });
-
-    // Option selection handler
-    optionTypeContainers.forEach(container => {
-      const optionType = container.dataset.optionType;
-      const optionTypeId = container.dataset.optionTypeId;
-      const radioButtons = container.querySelectorAll('.variant-radio');
-
-      radioButtons.forEach(radio => {
-        radio.addEventListener('change', function() {
-          if (this.checked && !this.disabled) {
-            selectedOptions[optionType] = this.dataset.optionValue;
-            selectedOptionIds[optionTypeId] = this.dataset.optionValue;
-            updatePrice();
-          }
-        });
-      });
-    });
-
-    // Initial price update
-    updatePrice();
-
-    quantityInput.addEventListener('change', updatePrice);
-  });
-</script>

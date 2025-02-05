@@ -1,0 +1,22 @@
+<label class="variant-option <%= 'default-selected' if matching_variants.first == @product.variants.first %>"
+       data-option-type="<%= option_type.name.downcase %>"
+       data-option-value="<%= option_value.value %>"
+       data-option-value-id="<%= option_value.id %>">
+  <input type="radio"
+         name="<%= option_type.name.downcase %>"
+         value="<%= option_value.value %>"
+         class="sr-only peer variant-radio"
+         data-variant-selection-target="variantRadio"
+         data-action="change->variant-selection#updateSelectedVariant"
+  data-option-type="<%= option_type.name.downcase %>"
+  data-option-value="<%= option_value.value %>"
+  data-option-value-id="<%= option_value.id %>"
+  <%= 'checked' if matching_variants.first == @product.variants.first %>
+  <%= 'disabled' if matching_variants.sum(:stock) == 0 %> />
+  <p class="px-6 py-2 font-bold border border-black rounded-lg
+            peer-checked:bg-black peer-checked:text-white
+            <%= 'opacity-50 cursor-not-allowed' if matching_variants.sum(:stock) == 0 %>">
+    <%= option_value.value %>
+    <%= " (Out of Stock)" if matching_variants.sum(:stock) == 0 %>
+  </p>
+</label>
