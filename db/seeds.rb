@@ -133,6 +133,20 @@ product = Product.create!(
   status: :active
 )
 
+# Attach images to the product
+image_files = Dir.glob(Rails.root.join('db', 'seeds', 'images', '*.{jpg,jpeg,png,gif}'))
+image_files.each do |image_path|
+  begin
+    product.images.attach(
+      io: File.open(image_path),
+      filename: File.basename(image_path),
+      content_type: Marcel::MimeType.for(Pathname.new(image_path))
+    )
+  rescue => e
+    puts "Error attaching image #{image_path}: #{e.message}"
+  end
+end
+
 # Create Master Variant
 master_variant = ProductVariant.create!(
   product: product,
