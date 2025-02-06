@@ -6,15 +6,9 @@
     </div>
     <!-- Menu items -->
     <div class="hidden text-lg text-primary lg:flex">
-      <a href="#" class="block p-3 px-3 mr-10 lg:inline-block hover:text-gray-700 lg:mt-0">
-        All
-      </a>
-      <a href="#" class="block p-3 px-3 mr-10 hover:text-gray-700 lg:inline-block lg:mt-0">
-        Women
-      </a>
-      <a href="#" class="block p-3 px-3 mr-10 hover:text-gray-700 lg:inline-block lg:mt-0">
-        Men
-      </a>
+      <% @categories.each do |category| %>
+        <%= link_to category.name, "#", class: "block p-3 px-3 mr-10 lg:inline-block hover:text-gray-700 lg:mt-0" %>
+      <% end %>
       <div id="cart_menu" class="cart_menu">
          <%= render "shared/cart_menu" %>
       </div>

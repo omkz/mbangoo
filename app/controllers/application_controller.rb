@@ -1,5 +1,6 @@
 class ApplicationController < ActionController::Base
   helper_method :current_order
+  before_action :categories
 
   def current_order
     if session[:order_id].nil?
@@ -11,5 +12,9 @@ class ApplicationController < ActionController::Base
         Order.new
       end
     end
+  end
+
+  def categories
+    @categories = Category.roots
   end
 end
