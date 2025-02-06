@@ -4,11 +4,7 @@ class Product < ApplicationRecord
   has_many :product_categories
   has_many :categories, through: :product_categories
 
-  has_many :variants,
-  -> { where(is_master: false)},
-  inverse_of: :product,
-  class_name: 'ProductVariant',
-  dependent: :destroy
+  has_many :variants, class_name: "ProductVariant", dependent: :destroy
 
   accepts_nested_attributes_for :variants,
     allow_destroy: true,
