@@ -3,6 +3,11 @@ class ProductVariant < ApplicationRecord
 
   has_many :variant_options, dependent: :destroy
   has_many :option_values, through: :variant_options
+
+  accepts_nested_attributes_for :variant_options, 
+  allow_destroy: true,
+  reject_if: :all_blank
+
   has_many :order_items
    
   validates :sku, presence: true, uniqueness: { scope: :product_id }
