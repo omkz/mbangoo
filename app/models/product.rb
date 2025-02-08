@@ -1,4 +1,46 @@
 class Product < ApplicationRecord
+  include PgSearch::Model
+  pg_search_scope :search_by_name_and_description,
+                  against: [:name, :description],
+                  using: {
+                    tsearch: { prefix: true },
+                    trigram: { threshold: 0.1 }
+                  }
+
+  scope :filter_by_category, ->(category_id) {
+    joins(:categories).where(categories: { id: category_id })
+  }
+
+  scope :filter_by_price_range, ->(min_price, max_price) {
+    scope = joins(:master_variant)
+    if min_price.present? && max_price.present?
+      scope.where(product_variants: { price: min_price..max_price })
+    elsif min_price.present?
+      scope.where('product_variants.price >= ?', min_price)
+    elsif max_price.present?
+      scope.where('product_variants.price <= ?', max_price)
+    else
+      scope
+    end
+  }
+
+  scope :order_by_option, ->(sort_option) {
+    case sort_option
+    when "price_asc"
+      joins(:master_variant).order('product_variants.price ASC')
+    when "price_desc"
+      joins(:master_variant).order('product_variants.price DESC')
+    when "name_asc"
+      order(name: :asc)
+    when "name_desc"
+      order(name: :desc)
+    when "newest"
+      order(created_at: :desc)
+    else
+      order(created_at: :desc)
+    end
+  }
+
   has_many_attached :images
 
   has_many :product_categories
@@ -39,7 +81,24 @@ class Product < ApplicationRecord
 
   validate :only_one_master_variant
   validate :at_least_one_category
-  
+
+  def self.search(query = nil, category = nil, min_price = nil, max_price = nil, sort = nil)
+    result = joins(:master_variant)
+    result = result.search_by_name_and_description(query) if query.present?
+    result = result.filter_by_category(category) if category.present?
+    result = result.filter_by_price_range(min_price, max_price) if min_price.present? || max_price.present?
+    result = result.order_by_option(sort) if sort.present?
+    result
+  end
+
+  def self.price_range
+    master_variants = ProductVariant.where(is_master: true)
+    {
+      min: master_variants.minimum(:price) || 0,
+      max: master_variants.maximum(:price) || 0
+    }
+  end
+
   def has_variants?
     variants.any?
   end
@@ -52,6 +111,9 @@ class Product < ApplicationRecord
     option_types
   end
 
+  def master_variant_price
+    master_variant&.price || 0
+  end
 
   private
 

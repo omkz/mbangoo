@@ -1,0 +1,79 @@
+<div class="container mx-auto px-4 py-8">
+  <div class="mb-6">
+    <%= form_with(url: products_path, method: :get, class: "flex flex-col md:flex-row gap-4") do |f| %>
+      <div class="flex-grow">
+        <%= f.text_field :search, 
+            placeholder: "Search products...", 
+            value: params[:search], 
+            class: "w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" %>
+      </div>
+
+      <div class="flex flex-wrap space-x-4 items-center">
+        <%= f.select :category_id, 
+            options_from_collection_for_select(@categories, 'id', 'name', params[:category_id]), 
+            { prompt: "All Categories" }, 
+            class: "px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" %>
+            
+        <div class="flex items-center space-x-2">
+          <%= f.label :min_price, "Min Price", class: "text-sm text-gray-600" %>
+          <%= f.number_field :min_price, 
+              value: params[:min_price] || @min_price, 
+              min: @min_price, 
+              max: @max_price, 
+              class: "w-24 px-2 py-1 border border-gray-300 rounded-lg" %>
+          
+          <%= f.label :max_price, "Max Price", class: "text-sm text-gray-600" %>
+          <%= f.number_field :max_price, 
+              value: params[:max_price] || @max_price, 
+              min: @min_price, 
+              max: @max_price, 
+              class: "w-24 px-2 py-1 border border-gray-300 rounded-lg" %>
+        </div>
+
+        <%= f.select :sort, 
+            [
+              ['Price Low to High', 'price_asc'], 
+              ['Price High to Low', 'price_desc'], 
+              ['Newest First', 'newest']
+            ], 
+            { prompt: "Sort By" }, 
+            class: "px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" %>
+
+        <%= f.submit "Apply Filters", class: "px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition duration-300" %>
+      </div>
+    <% end %>
+  </div>
+
+  <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+    <% @products.each do |product| %>
+      <div class="bg-white shadow-lg rounded-lg overflow-hidden transform transition duration-300 hover:scale-105">
+        <% if product.images.attached? %>
+          <%= image_tag product.images.first, class: "w-full h-48 object-cover" %>
+        <% else %>
+          <div class="w-full h-48 bg-gray-200 flex items-center justify-center">
+            <span class="text-gray-500">No Image</span>
+          </div>
+        <% end %>
+        
+        <div class="p-4">
+          <h3 class="font-bold text-lg mb-2"><%= product.name %></h3>
+          <p class="text-gray-600 mb-4 truncate"><%= product.description %></p>
+          
+          <div class="flex justify-between items-center">
+            <div class="flex items-center space-x-2">
+              <span class="font-bold text-blue-600">
+                <%= number_to_currency(product.master_variant_price) %>
+              </span>
+              <%= link_to "View Details", product_path(product), 
+                  class: "px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition duration-300" %>
+            </div>
+          </div>
+        </div>
+      </div>
+    <% end %>
+  </div>
+
+  <div class="mt-6 flex justify-center">
+    <%= paginate @products %>
+  </div>
+</div>

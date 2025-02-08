@@ -10,7 +10,7 @@ Rails.application.routes.draw do
     resources :option_values
   end
 
-  resources :products
+  resources :products, only: [:index, :show]
   resource :cart, only: [:show]
   resources :order_items, only: [:create, :update, :destroy]
   resources :payments, only: [:index] do
