@@ -2,17 +2,23 @@
   <nav class="container flex items-center justify-between p-6 mx-auto">
     <div class="flex flex-row justify-center">
       <div class="w-10 h-10 rounded-lg bg-gradient-to-r from-purple-400 to-red-700"></div>
-      <%= link_to  "MBango", root_path, class: "ml-2 text-3xl text-gray-600" %>
+      <%= link_to  "Bangoo", root_path, class: "ml-2 text-3xl text-gray-600" %>
     </div>
     <!-- Menu items -->
     <div class="hidden text-lg text-primary lg:flex">
       <% @categories.each do |category| %>
-        <%= link_to category.name, "#", class: "block p-3 px-3 mr-10 lg:inline-block hover:text-gray-700 lg:mt-0" %>
+        <%= link_to category.name, products_path(category_id: category.id), class: "block p-3 px-3 mr-10 lg:inline-block hover:text-gray-700 lg:mt-0" %>
       <% end %>
+        <%= form_with(url: products_path, method: :get, class: "flex items-center") do |f| %>
+          <%= f.text_field :search, 
+              placeholder: "Search...", 
+              class: "px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 w-48 text-sm" %>
+        <% end %>
+      </div>
       <div id="cart_menu" class="cart_menu">
          <%= render "shared/cart_menu" %>
       </div>
-    </div>
+  
     <!-- CTA and Hamburger icon -->
     <div class="flex items-center">
       <div class="mr-5 lg:mr-0">
