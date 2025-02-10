@@ -5,6 +5,7 @@ class ProductsController < ApplicationController
   def index
     @products = fetch_products
     set_price_range
+    set_categories_filter
   end
 
   def show
@@ -28,6 +29,10 @@ class ProductsController < ApplicationController
     price_range = Product.price_range
     @min_price = price_range[:min]
     @max_price = price_range[:max]
+  end
+
+  def set_categories_filter
+    @categories_filter = Category.all
   end
 
   def set_product

@@ -8,9 +8,13 @@ class Product < ApplicationRecord
                   }
 
   scope :filter_by_category, ->(category_id) {
-    joins(:categories).where(categories: { id: category_id })
+    joins(:categories)
+      .joins("LEFT JOIN product_variants ON product_variants.product_id = products.id AND product_variants.is_master = true") # Joins to master variant only
+      .where(categories: { id: Category.find(category_id).self_and_descendants_ids })
+      .select("products.*, product_variants.price")
+      .distinct
   }
-
+  
   scope :filter_by_price_range, ->(min_price, max_price) {
     scope = joins(:master_variant)
     if min_price.present? && max_price.present?

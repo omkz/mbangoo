@@ -1,4 +1,3 @@
-# app/models/category.rb
 class Category < ApplicationRecord
   belongs_to :parent, class_name: 'Category', optional: true
   has_many :subcategories, class_name: 'Category', foreign_key: :parent_id, dependent: :destroy
@@ -24,6 +23,10 @@ class Category < ApplicationRecord
 
   def children
     Category.where(parent_id: id)
+  end
+
+  def self_and_descendants_ids
+    [id] + subcategories.flat_map(&:self_and_descendants_ids)
   end
 
   private
