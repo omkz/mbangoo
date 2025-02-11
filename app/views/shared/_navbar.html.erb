@@ -4,21 +4,56 @@
       <div class="w-10 h-10 rounded-lg bg-gradient-to-r from-purple-400 to-red-700"></div>
       <%= link_to  "Bangoo", root_path, class: "ml-2 text-3xl text-gray-600" %>
     </div>
-    <!-- Menu items -->
-    <div class="hidden text-lg text-primary lg:flex">
-      <% @categories.each do |category| %>
-        <%= link_to category.name, products_path(category_id: category.id), class: "block p-3 px-3 mr-10 lg:inline-block hover:text-gray-700 lg:mt-0" %>
-      <% end %>
-        <%= form_with(url: products_path, method: :get, class: "flex items-center") do |f| %>
-          <%= f.text_field :search, 
-              placeholder: "Search...", 
-              class: "px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 w-48 text-sm" %>
+    <!-- Categories Dropdown -->
+    <div class="relative group">
+      <button class="block p-3 px-3 mr-10 lg:inline-block hover:text-gray-700 lg:mt-0">
+        Shop
+        <svg class="inline-block w-4 h-4 ml-1" fill="currentColor" viewBox="0 0 20 20">
+          <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" />
+        </svg>
+      </button>
+      <div class="absolute z-10 hidden w-56 bg-white rounded-lg shadow-lg group-hover:block">
+        <% Category.roots.each do |category| %>
+          <div class="relative group/submenu">
+            <%= link_to products_path(category_id: category.id),
+                  class: "block px-4 py-2 text-gray-800 hover:bg-gray-100 flex justify-between items-center" do %>
+              <%= category.name %>
+              <% if category.children.any? %>
+                <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                  <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd" />
+                </svg>
+              <% end %>
+            <% end %>
+            <% if category.children.any? %>
+              <div class="absolute top-0 hidden w-56 bg-white rounded-lg shadow-lg left-full group-hover/submenu:block">
+                <% category.children.each do |subcategory| %>
+                  <%= link_to products_path(category_id: subcategory.id),
+                        class: "block px-4 py-2 text-gray-800 hover:bg-gray-100" do %>
+                    <%= subcategory.name %>
+                  <% end %>
+                <% end %>
+              </div>
+            <% end %>
+          </div>
         <% end %>
       </div>
-      <div id="cart_menu" class="cart_menu">
-         <%= render "shared/cart_menu" %>
-      </div>
-  
+    </div>
+    <!-- Menu items -->
+    <div class="hidden text-lg text-primary lg:flex">
+      <%= link_to "Men", "#", class: "block p-3 px-3 mr-10 lg:inline-block hover:text-gray-700 lg:mt-0" %>
+      <%= link_to "Women", "#", class: "block p-3 px-3 mr-10 lg:inline-block hover:text-gray-700 lg:mt-0" %>
+      <%= link_to "Sale", "#", class: "block p-3 px-3 mr-10 lg:inline-block hover:text-gray-700 lg:mt-0" %>
+      <%= link_to "Brands", "#", class: "block p-3 px-3 mr-10 lg:inline-block hover:text-gray-700 lg:mt-0" %>
+      <%= link_to "Pre-Owned", "#", class: "block p-3 px-3 mr-10 lg:inline-block hover:text-gray-700 lg:mt-0" %>
+      <%= form_with(url: products_path, method: :get, class: "flex items-center") do |f| %>
+        <%= f.text_field :search,
+              placeholder: "Search...",
+              class: "px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 w-48 text-sm" %>
+      <% end %>
+    </div>
+    <div id="cart_menu" class="cart_menu">
+      <%= render "shared/cart_menu" %>
+    </div>
     <!-- CTA and Hamburger icon -->
     <div class="flex items-center">
       <div class="mr-5 lg:mr-0">
