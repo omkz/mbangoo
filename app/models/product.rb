@@ -8,13 +8,14 @@ class Product < ApplicationRecord
                   }
 
   scope :filter_by_category, ->(category_id) {
-    joins(:categories)
-      .joins("LEFT JOIN product_variants ON product_variants.product_id = products.id AND product_variants.is_master = true") # Joins to master variant only
-      .where(categories: { id: Category.find(category_id).self_and_descendants_ids })
-      .select("products.*, product_variants.price")
-      .distinct
+    category = Category.find(category_id)
+    where(
+      id: joins(:categories)
+        .where(categories: { id: category.self_and_descendants_ids })
+        .select('DISTINCT products.id')
+    )
   }
-  
+
   scope :filter_by_price_range, ->(min_price, max_price) {
     scope = joins(:master_variant)
     if min_price.present? && max_price.present?
@@ -28,16 +29,12 @@ class Product < ApplicationRecord
     end
   }
 
-  scope :order_by_option, ->(sort_option) {
+  scope :sorted_by, ->(sort_option) {
     case sort_option
     when "price_asc"
       joins(:master_variant).order('product_variants.price ASC')
     when "price_desc"
       joins(:master_variant).order('product_variants.price DESC')
-    when "name_asc"
-      order(name: :asc)
-    when "name_desc"
-      order(name: :desc)
     when "newest"
       order(created_at: :desc)
     else
@@ -86,21 +83,21 @@ class Product < ApplicationRecord
   validate :only_one_master_variant
   validate :at_least_one_category
 
-  def self.search(query = nil, category = nil, min_price = nil, max_price = nil, sort = nil)
-    result = joins(:master_variant)
-    result = result.search_by_name_and_description(query) if query.present?
-    result = result.filter_by_category(category) if category.present?
-    result = result.filter_by_price_range(min_price, max_price) if min_price.present? || max_price.present?
-    result = result.order_by_option(sort) if sort.present?
-    result
-  end
-
   def self.price_range
     master_variants = ProductVariant.where(is_master: true)
     {
       min: master_variants.minimum(:price) || 0,
       max: master_variants.maximum(:price) || 0
     }
+  end
+
+  def self.search(query = nil, category = nil, min_price = nil, max_price = nil, sort = nil)
+    result = joins(:master_variant)
+    result = result.where(id: search_by_name_and_description(query).select(:id)) if query.present?
+    result = result.filter_by_category(category) if category.present?
+    result = result.filter_by_price_range(min_price, max_price) if min_price.present? || max_price.present?
+    result = result.sorted_by(sort) if sort.present?
+    result
   end
 
   def has_variants?
