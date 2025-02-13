@@ -2,6 +2,7 @@ Rails.application.routes.draw do
   namespace :admin do
     resources :categories
     resources :dashboard, only: [:index]
+    resources :orders
     resources :products do
       resources :variants
       resources :images

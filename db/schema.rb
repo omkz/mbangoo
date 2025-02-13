@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2025_02_08_035524) do
+ActiveRecord::Schema[7.2].define(version: 2025_02_13_021159) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_trgm"
   enable_extension "plpgsql"
@@ -98,7 +98,9 @@ ActiveRecord::Schema[7.2].define(version: 2025_02_08_035524) do
     t.bigint "order_status_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.bigint "user_id"
     t.index ["order_status_id"], name: "index_orders_on_order_status_id"
+    t.index ["user_id"], name: "index_orders_on_user_id"
   end
 
   create_table "product_categories", force: :cascade do |t|
@@ -185,6 +187,7 @@ ActiveRecord::Schema[7.2].define(version: 2025_02_08_035524) do
   add_foreign_key "order_items", "orders"
   add_foreign_key "order_items", "product_variants"
   add_foreign_key "orders", "order_statuses"
+  add_foreign_key "orders", "users"
   add_foreign_key "product_categories", "categories"
   add_foreign_key "product_categories", "products"
   add_foreign_key "product_option_types", "option_types"
