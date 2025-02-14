@@ -1,65 +1,24 @@
-<div class="container mx-auto px-4 sm:px-8">
+<div class="container px-4 mx-auto sm:px-8">
   <div class="py-8">
-    <div class="flex justify-between items-center mb-6">
+    <div class="flex items-center justify-between mb-6">
       <h1 class="text-2xl font-semibold text-gray-700">Order Management</h1>
-      
       <%= form_tag admin_orders_path, method: :get, class: 'flex space-x-2' do %>
-        <%= select_tag :status, 
+        <%= select_tag :status,
             options_for_select([
-              ['All Statuses', ''], 
-              ['Pending', 'pending'], 
-              ['Processing', 'processing'], 
-              ['Shipped', 'shipped'], 
-              ['Delivered', 'delivered'], 
+              ['All Statuses', ''],
+              ['Pending', 'pending'],
+              ['Processing', 'processing'],
+              ['Shipped', 'shipped'],
+              ['Delivered', 'delivered'],
               ['Cancelled', 'cancelled']
-            ], params[:status]), 
-            class: 'px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500', 
+            ], params[:status]),
+            class: 'px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500',
             prompt: 'Filter Status' %>
-
-
         <%= submit_tag 'Filter', class: 'px-4 py-2 bg-blue-600 text-white rounded-md text-sm hover:bg-blue-700 transition-colors' %>
       <% end %>
     </div>
-
-  <div class="overflow-x-auto bg-white shadow-md rounded-lg">
-  <table class="min-w-full">
-    <thead class="bg-gray-100 border-b">
-      <tr>
-        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Order ID</th>
-        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Customer</th>
-        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Total Price</th>
-        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
-        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date</th>
-        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
-      </tr>
-    </thead>
-    <tbody class="bg-white divide-y divide-gray-200">
-      <% @orders.each do |order| %>
-        <tr class="hover:bg-gray-50 transition-colors">
-          <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900"><%= order.id %></td>
-          <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-            <%= order.user ? order.user.email : 'Guest' %>
-          </td>
-          <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-            <%= number_to_currency(order.total) %>
-          </td>
-          <td class="px-6 py-4 whitespace-nowrap">
-            <%= order_status_badge(order.status) %>
-          </td>
-          <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-            <%= order.created_at.strftime("%d %b %Y") %>
-          </td>
-          <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
-            <%= link_to 'View', admin_order_path(order), class: 'text-blue-600 hover:text-blue-900 mr-2' %>
-          </td>
-        </tr>
-      <% end %>
-    </tbody>
-  </table>
-</div>
-
-
-    <div class="mt-4 flex justify-center">
+    <%= render 'admin/orders/orders_table' %>
+    <div class="flex justify-center mt-4">
       <%= paginate @orders %>
     </div>
   </div>

@@ -1,0 +1,27 @@
+<div>
+  <h2 class="mb-4 text-xl font-semibold text-gray-700">Order Details</h2>
+  <div class="space-y-3">
+    <div class="flex justify-between pb-2 border-b">
+      <span class="text-gray-600">Order Status:</span>
+      <%= order_status_badge(@order.status) %>
+    </div>
+    <div class="flex justify-between pb-2 border-b">
+      <span class="text-gray-600">Customer:</span>
+      <span class="text-gray-800">
+        <%= @order.user ? @order.user.email : 'Guest' %>
+      </span>
+    </div>
+    <div class="flex justify-between pb-2 border-b">
+      <span class="text-gray-600">Order Date:</span>
+      <span class="text-gray-800">
+        <%= @order.created_at.strftime("%d %B %Y at %I:%M %p") %>
+      </span>
+    </div>
+    <div class="flex justify-between pb-2 border-b">
+      <span class="text-gray-600">Total Amount:</span>
+      <span class="font-semibold text-gray-800">
+        <%= number_to_currency(@order.total) %>
+      </span>
+    </div>
+  </div>
+</div>

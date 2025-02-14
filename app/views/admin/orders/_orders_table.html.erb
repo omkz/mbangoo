@@ -1,0 +1,36 @@
+<div class="overflow-x-auto bg-white rounded-lg shadow-md">
+  <table class="min-w-full">
+    <thead class="bg-gray-100 border-b">
+      <tr>
+        <th class="px-6 py-3 text-xs font-medium tracking-wider text-left text-gray-500 uppercase">Order ID</th>
+        <th class="px-6 py-3 text-xs font-medium tracking-wider text-left text-gray-500 uppercase">Customer</th>
+        <th class="px-6 py-3 text-xs font-medium tracking-wider text-left text-gray-500 uppercase">Total Price</th>
+        <th class="px-6 py-3 text-xs font-medium tracking-wider text-left text-gray-500 uppercase">Status</th>
+        <th class="px-6 py-3 text-xs font-medium tracking-wider text-left text-gray-500 uppercase">Date</th>
+        <th class="px-6 py-3 text-xs font-medium tracking-wider text-left text-gray-500 uppercase">Actions</th>
+      </tr>
+    </thead>
+    <tbody class="bg-white divide-y divide-gray-200">
+      <% @orders.each do |order| %>
+        <tr class="transition-colors hover:bg-gray-50">
+          <td class="px-6 py-4 text-sm text-gray-900 whitespace-nowrap"><%= order.id %></td>
+          <td class="px-6 py-4 text-sm text-gray-900 whitespace-nowrap">
+            <%= order.user ? order.user.email : 'Guest' %>
+          </td>
+          <td class="px-6 py-4 text-sm text-gray-900 whitespace-nowrap">
+            <%= number_to_currency(order.total) %>
+          </td>
+          <td class="px-6 py-4 whitespace-nowrap">
+            <%= order_status_badge(order.status) %>
+          </td>
+          <td class="px-6 py-4 text-sm text-gray-500 whitespace-nowrap">
+            <%= order.created_at.strftime("%d %b %Y") %>
+          </td>
+          <td class="px-6 py-4 text-sm font-medium whitespace-nowrap">
+            <%= link_to 'View', admin_order_path(order), class: 'text-blue-600 hover:text-blue-900 mr-2' %>
+          </td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+</div>
