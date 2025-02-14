@@ -3,23 +3,16 @@ class Order < ApplicationRecord
   belongs_to :order_status
   has_many :order_items, dependent: :destroy
  
-  before_create :set_order_status
-  before_save :update_subtotal
-
-  def subtotal
-    order_items.includes(:product_variant).collect { |oi| oi.valid? ? (oi.quantity * oi.unit_price) : 0 }.sum
-  end
+  before_save :update_subtotal_and_total
 
   def status
     order_status.name
   end
 
-private
-  def set_order_status
-    self.order_status_id = 1
-  end
+  private
 
-  def update_subtotal
-    self[:subtotal] = subtotal
+  def update_subtotal_and_total
+    self.subtotal = order_items.sum(&:total_price)
+    self.total = subtotal + (tax || 0) + (shipping || 0)
   end
 end
