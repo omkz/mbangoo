@@ -9,7 +9,7 @@ class ProductsController < ApplicationController
   end
 
   def show
-    @order_item = current_order.order_items.new
+    @order_item = OrderItem.new
     @product = ProductDecorator.new(@product)
   end
 

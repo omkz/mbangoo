@@ -5,6 +5,7 @@ class User < ApplicationRecord
   has_many :products
   has_many :user_roles
   has_many :roles, through: :user_roles
+  has_many :orders, dependent: :destroy
 
   after_create :assign_default_role
 

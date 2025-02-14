@@ -1,4 +1,9 @@
 class ApplicationController < ActionController::Base
-  include Orderable
-  allow_browser versions: :modern
+  helper_method :current_order
+
+  private
+
+  def current_order
+    @current_order ||= CurrentOrderService.new(current_user, session).current_order
+  end
 end
