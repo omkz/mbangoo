@@ -9,10 +9,16 @@ class OrderItem < ApplicationRecord
       greater_than: 0 
     }
 
-  before_save :set_unit_price
+  before_save :set_prices
+  after_commit :update_order_totals
+  before_destroy :update_order_totals
 
   def product
     product_variant.product
+  end
+
+  def unit_price
+    product_variant.price
   end
 
   def total_price
@@ -21,14 +27,13 @@ class OrderItem < ApplicationRecord
 
   private
 
-  def set_unit_price
-    self.unit_price = product_variant.price
+  def set_prices
+    self.unit_price = unit_price
+    self.total_price = total_price
   end
 
-  def order_present
-    if order.nil?
-      errors.add(:order, "is not a valid order.")
-    end
+  def update_order_totals
+    order.update_subtotal_and_total
   end
   
 end

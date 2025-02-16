@@ -41,8 +41,8 @@
           'variant-selection-target': 'selectedVariantId'
         } %>
     <%= form.number_field :quantity,
-        value: @order_item.quantity.to_i || 1,
         class: "w-16",
+        value: @order_item.quantity.to_i || 1,
         min: 1,
         id: "quantity-input",
         data: {

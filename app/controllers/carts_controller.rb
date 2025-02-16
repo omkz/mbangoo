@@ -1,5 +1,7 @@
 class CartsController < ApplicationController
+  
   def show
-    @order_items = current_order.order_items
+    @order = current_order || Order.new
+    @order_items = @order.order_items
   end
 end
