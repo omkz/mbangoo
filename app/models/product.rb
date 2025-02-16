@@ -1,4 +1,7 @@
 class Product < ApplicationRecord
+  extend FriendlyId
+  friendly_id :name, use: :slugged
+  
   include PgSearch::Model
   pg_search_scope :search_by_name_and_description,
                   against: [:name, :description],

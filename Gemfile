@@ -72,3 +72,5 @@ gem "stripe", "~> 8.5"
 gem "pg_search", "~> 2.3"
 
 gem "kaminari", "~> 1.2"
+
+gem "friendly_id", "~> 5.5"
