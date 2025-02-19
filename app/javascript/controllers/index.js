@@ -10,8 +10,20 @@ application.register("hello", HelloController)
 import PhotoswipeController from "./photoswipe_controller"
 application.register("photoswipe", PhotoswipeController)
 
+import ProductController from "./product_controller"
+application.register("product", ProductController)
+
+import ProductVariantController from "./product_variant_controller"
+application.register("product-variant", ProductVariantController)
+
 import StripeController from "./stripe_controller"
 application.register("stripe", StripeController)
+
+import VariantController from "./variant_controller"
+application.register("variant", VariantController)
+
+import VariantSelection2Controller from "./variant_selection2_controller"
+application.register("variant-selection2", VariantSelection2Controller)
 
 import VariantSelectionController from "./variant_selection_controller"
 application.register("variant-selection", VariantSelectionController)

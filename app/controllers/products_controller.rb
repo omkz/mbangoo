@@ -1,6 +1,6 @@
 class ProductsController < ApplicationController
   PRODUCTS_PER_PAGE = 24
-  before_action :set_product, only: [:show]
+  before_action :set_product, only: [:show, :find_variant]
 
   def index
     @products = fetch_products
@@ -10,7 +10,16 @@ class ProductsController < ApplicationController
 
   def show
     @order_item = OrderItem.new
-    @product = ProductDecorator.new(@product)
+  end
+  
+  def find_variant
+    variant = @product.find_variant_by_option_values(params[:option_values])
+
+    if variant
+      render json: { variant_id: variant.id, price: variant.price }
+    else
+      render json: { error: "Variant not available" }, status: :not_found
+    end
   end
 
   private

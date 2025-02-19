@@ -1,7 +1,7 @@
 class Product < ApplicationRecord
   extend FriendlyId
   friendly_id :name, use: :slugged
-  
+
   include PgSearch::Model
   pg_search_scope :search_by_name_and_description,
                   against: [:name, :description],
@@ -117,6 +117,17 @@ class Product < ApplicationRecord
 
   def master_variant_price
     master_variant&.price || 0
+  end
+
+  def find_variant_by_option_values(option_values)
+    return nil unless option_values.present?
+
+    option_value_ids = option_values.split(",").map(&:to_i)
+    variants.joins(:option_values)
+            .where(option_values: { id: option_value_ids })
+            .group("product_variants.id")
+            .having("COUNT(product_variants.id) = ?", option_value_ids.size)
+            .first
   end
 
   private

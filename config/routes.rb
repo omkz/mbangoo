@@ -11,7 +11,9 @@ Rails.application.routes.draw do
     resources :option_values
   end
 
-  resources :products, only: [:index, :show]
+  resources :products, only: [:index, :show] do
+    get "find_variant", on: :member
+  end
   resource :cart, only: [:show]
   resources :order_items, only: [:create, :update, :destroy]
   resources :payments, only: [:index] do
