@@ -3,8 +3,8 @@ import { Controller } from "@hotwired/stimulus";
 // Connects to data-controller="product-variant"
 export default class extends Controller {
   static values = { id: Number };
-  static targets = ["select", "variantId", "price", "submitButton"];
-
+  static targets = ["select", "variantId", "price", "submitButton", "quantityInput"];
+  
   fetchVariant() {
     const selectedOptions = this.selectedOptions();
 
@@ -36,5 +36,19 @@ export default class extends Controller {
 
   selectedOptions() {
     return this.selectTargets.map((select) => select.value);
+  }
+
+  decreaseQuantity() {
+    const quantityInput = this.quantityInputTarget;
+    let currentValue = parseInt(quantityInput.value);
+    if (currentValue > 1) {
+      quantityInput.value = currentValue - 1;
+    }
+  }
+
+  increaseQuantity() {
+    const quantityInput = this.quantityInputTarget;
+    let currentValue = parseInt(quantityInput.value);
+    quantityInput.value = currentValue + 1;
   }
 }
