@@ -13,20 +13,20 @@
         </svg>
       </button>
       <div class="absolute z-10 hidden w-56 bg-white rounded-lg shadow-lg group-hover:block">
-        <% Category.roots.each do |category| %>
+        <% @categories.each do |category| %>
           <div class="relative group/submenu">
             <%= link_to products_path(category_id: category.id),
                   class: "block px-4 py-2 text-gray-800 hover:bg-gray-100 flex justify-between items-center" do %>
               <%= category.name %>
-              <% if category.children.any? %>
+              <% if category.subcategories.any? %>
                 <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
                   <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd" />
                 </svg>
               <% end %>
             <% end %>
-            <% if category.children.any? %>
+            <% if category.subcategories.any? %>
               <div class="absolute top-0 hidden w-56 bg-white rounded-lg shadow-lg left-full group-hover/submenu:block">
-                <% category.children.each do |subcategory| %>
+                <% category.subcategories.each do |subcategory| %>
                   <%= link_to products_path(category_id: subcategory.id),
                         class: "block px-4 py-2 text-gray-800 hover:bg-gray-100" do %>
                     <%= subcategory.name %>
