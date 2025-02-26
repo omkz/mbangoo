@@ -74,3 +74,11 @@ gem "pg_search", "~> 2.3"
 gem "kaminari", "~> 1.2"
 
 gem "friendly_id", "~> 5.5"
+
+gem "prosopite", "~> 2.0"
+gem 'pg_query'
+# For profiling
+gem "rack-mini-profiler", "~> 3.3"
+gem 'memory_profiler'
+gem 'stackprof'
+
