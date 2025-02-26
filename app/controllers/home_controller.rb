@@ -1,5 +1,5 @@
 class HomeController < ApplicationController
   def index
-    @products = Product.limit(6)
+    @products = Product.includes(images_attachments: :blob).limit(6)
   end
 end
