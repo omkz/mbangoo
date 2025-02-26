@@ -26,7 +26,17 @@ class Category < ApplicationRecord
   end
 
   def self_and_descendants_ids
-    [id] + subcategories.flat_map(&:self_and_descendants_ids)
+    query = <<-SQL
+      WITH RECURSIVE category_tree AS (
+        SELECT id FROM categories WHERE id = ?
+        UNION ALL
+        SELECT c.id FROM categories c
+        INNER JOIN category_tree ct ON ct.id = c.parent_id
+      )
+      SELECT id FROM category_tree;
+    SQL
+  
+    Category.find_by_sql([query, id]).pluck('id')
   end
 
   private

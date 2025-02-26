@@ -88,6 +88,7 @@ class Product < ApplicationRecord
 
   def self.price_range
     master_variants = ProductVariant.where(is_master: true)
+                                    .select(:price)
     {
       min: master_variants.minimum(:price) || 0,
       max: master_variants.maximum(:price) || 0
@@ -95,14 +96,14 @@ class Product < ApplicationRecord
   end
 
   def self.search(query = nil, category = nil, min_price = nil, max_price = nil, sort = nil)
-    result = joins(:master_variant)
+    result = joins(:master_variant).includes(:categories, :master_variant, images_attachments: :blob)
     result = result.where(id: search_by_name_and_description(query).select(:id)) if query.present?
     result = result.filter_by_category(category) if category.present?
     result = result.filter_by_price_range(min_price, max_price) if min_price.present? || max_price.present?
     result = result.sorted_by(sort) if sort.present?
     result
   end
-
+  
   def has_variants?
     variants.any?
   end
