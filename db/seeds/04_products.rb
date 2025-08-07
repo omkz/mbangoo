@@ -22,11 +22,18 @@ colors = [
   color_type.option_values.create!(value: 'Green')
 ]
 
-# Create Product
+# Find or create categories to ensure they exist
+category_names = ['Electronics', 'Smartphones', 'Accessories']
+
+categories = category_names.map do |name|
+  Category.find_or_create_by!(name: name)
+end
+
 product = Product.create!(
   name: 'Sample Sneakers',
   description: 'Comfortable and stylish sneakers',
-  status: :active
+  status: :active,
+  categories: categories
 )
 
 # Attach images to the product
@@ -92,20 +99,6 @@ ProductOptionType.create!(
   product: product,
   option_type: color_type
 )
-
-# Find categories
-electronics = Category.find_by(name: 'Electronics')
-smartphones = Category.find_by(name: 'Smartphones')
-accessories = Category.find_by(name: 'Accessories')
-
-# Associate product with categories
-if electronics && smartphones && accessories
-  product.categories << [
-    electronics,    # Main Electronics category
-    smartphones,    # Smartphones subcategory
-    accessories     # Accessories subcategory
-  ]
-end
 
 puts "Seed data created successfully!"
 puts "Product: #{product.name}"
