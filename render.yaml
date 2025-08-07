@@ -1,6 +1,6 @@
 services:
   - type: web
-    name: mysite
+    name: mbangoo
     runtime: ruby
     plan: free
     buildCommand: './bin/render-build.sh'
