@@ -2,6 +2,9 @@
 
 Mbango is an open-source e-commerce solution based on Ruby on Rails 7.
 
+[View Demo](https://mbangoo-69md.onrender.com/)
+
+
 ![Screenshot](https://raw.githubusercontent.com/omkz/mbangoo/master/public/screenshot.png)
 ## Tech Stack
 
