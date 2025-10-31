@@ -1,0 +1,22 @@
+databases:
+  - name: mbangoo_production
+    databaseName: mbangoo_production
+    user: mbangoo
+    plan: free
+
+services:
+  - type: web
+    name: mbangoo
+    runtime: ruby
+    plan: free
+    buildCommand: './bin/render-build.sh'
+    startCommand: 'bundle exec rails server'
+    envVars:
+      - key: DATABASE_URL
+        fromDatabase:
+          name: mbangoo_production
+          property: connectionString
+      - key: RAILS_MASTER_KEY
+        sync: false
+      - key: WEB_CONCURRENCY
+        value: 2
