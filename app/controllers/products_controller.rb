@@ -11,7 +11,7 @@ class ProductsController < ApplicationController
   def show
     @order_item = OrderItem.new
   end
-  
+
   def find_variant
     variant = @product.find_variant_by_option_values(params[:option_values])
 
@@ -45,7 +45,10 @@ class ProductsController < ApplicationController
   end
 
   def set_product
-    @product = Product.friendly.find(params[:id])
+    @product = Product.includes(
+                  option_types: :option_values,
+                  images_attachments: :blob
+                ).friendly.find(params[:id])
   end
 
 end

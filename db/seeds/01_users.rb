@@ -1,7 +1,7 @@
 # User and Role Seeding
-Role.destroy_all
 UserRole.destroy_all
 User.destroy_all
+Role.destroy_all
 
 # Create Roles
 admin_role = Role.create!(name: 'admin')
